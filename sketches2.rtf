@@ -1,0 +1,293 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1038\cocoasubrtf360
+{\fonttbl\f0\fnil\fcharset0 Monaco;}
+{\colortbl;\red255\green255\blue255;\red191\green0\blue0;\red0\green0\blue191;\red0\green115\blue0;
+}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs28 \cf0 \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 //whomp first attempts\cf0 \
+\
+\cf2 // a slow version for the whole star rotation\cf0 \
+( \cf2 //too random\cf0 \
+	\{\
+		\cf3 var\cf0  sigs, envs, cl_envs, ch_envs, p_envs, ts, outEnv, out;\
+		\
+		ts =31; \
+		\
+		sigs = \cf3 Array\cf0 .newClear(3);\
+		sigs[0] = \cf3 SinOsc\cf0 .ar(\cf3 ExpRand\cf0 (25,80),0,10);\
+		sigs[1] = \cf3 LFCub\cf0 .ar(\cf3 ExpRand\cf0 (25,80),0,1);\
+		sigs[2] = \cf3 LFPar\cf0 .ar(\cf3 ExpRand\cf0 (25,80),0,1);\
+		\
+		envs = \cf3 Array\cf0 .fill(3, \{\cf3 arg\cf0  count;\
+			\cf3 var\cf0  durs = [[0.5,0.5],[0.2,0.8],[0.05,0.95]].choose;\
+			\cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .new([0,1,0],[durs[0],durs[1]],[\cf3 Rand\cf0 (1,4),\cf3 Rand\cf0 (-1,-4)]),1, timeScale: ts);\
+			\});\
+		\cf2 /*cl_envs = Array.fill(3, \{arg count;\
+			var durs = [Rand(0.05,0.5), Rand(0.05,0.5)].normalizeSum;\
+			EnvGen.kr(Env.new([-1,-0.5,-0.05],[durs[0],durs[1]],[Rand(-4,4),Rand(-4,4)]),1, timeScale: ts);\
+			\});\
+		ch_envs = Array.fill(3, \{arg count;\
+			var durs = [Rand(0.05,0.5), Rand(0.05,0.5)].normalizeSum;\
+			EnvGen.kr(Env.new([1,0.5,0.05],[durs[0],durs[1]],[Rand(-4,4),Rand(-4,4)]),1, timeScale: ts);\
+			\});*/\cf0 \
+		p_envs = \cf3 Array\cf0 .fill(3, \{\cf3 arg\cf0  count;\
+			\cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .new([-0.75,0.75],[1],[\cf3 Rand\cf0 (-4,4)]),1, timeScale: ts);\
+			\});\
+		\
+		out = \cf3 Mix\cf0 .fill(3,\{\cf3 arg\cf0  count;\
+			\cf3 var\cf0  sig;\
+			sig = \cf3 Clip\cf0 .ar(sigs[count],\cf3 Rand\cf0 (-1,-0.05), \cf3 Rand\cf0 (-1,-0.05)) * 0.3 * \cf3 LFPulse\cf0 .kr(15,0,0.6,1);\
+			sig = \cf3 Pan2\cf0 .ar(sig,p_envs[count]); \cf2 //do an ambisonic\cf0 \
+			\});\
+			\
+		outEnv = \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .linen(0.05,0.8,0.15,1,\cf4 'sine'\cf0 ),1,timeScale: ts, doneAction:2);\
+		out = out * 0.3 * outEnv;\
+		\
+	\}.play;\
+)\
+\
+\cf2 //try variations on pulse env, \cf0 \
+\cf2 //Sig type\cf0 \
+\cf2 //distortion\cf0 \
+\cf2 //pulse speed\cf0 \
+\cf2 //mixes\cf0 \
+\
+( \cf2 //attempting more controlled\cf0 \
+	\{\
+		\cf3 var\cf0  sigs, envs, cl_envs, ch_envs, p_envs, ts, outEnv, out;\
+		\
+		ts =31; \
+		\
+		sigs = \cf3 Array\cf0 .newClear(3);\
+		sigs[2] = \cf3 SinOsc\cf0 .ar(25,0,10).clip2(0.1);\
+		sigs[1] = \cf3 LFCub\cf0 .ar(50,0,1).clip2(0.05);\
+		sigs[0] = \cf3 LFPar\cf0 .ar(50,0,1).clip2(0.5);\
+		\
+		envs = \cf3 Array\cf0 .fill(3, \{\cf3 arg\cf0  count;\
+			\cf3 var\cf0  durs = [[0.5 * \cf3 Rand\cf0 (0.9,1.1),0.5].normalizeSum,\
+						  [0.8 * \cf3 Rand\cf0 (0.9,1.1),0.2].normalizeSum,\
+						  [0.2 * \cf3 Rand\cf0 (0.9,1),0.8].normalizeSum];\
+			\cf3 var\cf0  curves = [4,-4];\
+			\cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .new([0,1,0],durs[count],curves),1, timeScale: ts);\
+			\});\
+		\cf2 /*cl_envs = Array.fill(3, \{arg count;\
+			var durs = [Rand(0.05,0.5), Rand(0.05,0.5)].normalizeSum;\
+			EnvGen.kr(Env.new([-1,-0.5,-0.05],[durs[0],durs[1]],[Rand(-4,4),Rand(-4,4)]),1, timeScale: ts);\
+			\});\
+		ch_envs = Array.fill(3, \{arg count;\
+			var durs = [Rand(0.05,0.5), Rand(0.05,0.5)].normalizeSum;\
+			EnvGen.kr(Env.new([1,0.5,0.05],[durs[0],durs[1]],[Rand(-4,4),Rand(-4,4)]),1, timeScale: ts);\
+			\});*/\cf0 \
+		p_envs = \cf3 Array\cf0 .fill(3, \{\cf3 arg\cf0  count;\
+			\cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .new([-0.75,0,0.75],[0.5,0.5],[\cf3 Rand\cf0 (1,4), \cf3 Rand\cf0 (-1,-4)]),1, timeScale: ts);\
+			\});\
+		\
+		\cf2 /*out = Mix.fill(3,\{arg count;\
+			var sig;\
+			sig = sigs[count] * 0.3 * LFPulse.kr(15,0,0.6,1);\
+			sig = Pan2.ar(sig,p_envs[count]); //do an ambisonic\
+			\});*/\cf0 \
+		\
+			\
+		outEnv = \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .linen(0.05,0.8,0.15,1,\cf4 'sine'\cf0 ),1,timeScale: ts, doneAction:2);\
+		out = out * 0.3 * outEnv;\
+		\
+	\}.play;\
+)\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf3 Env\cf0 .new([0,1,0],[0.8,0.2],[-4,2]).plot;\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 //experimenting with clipping\cf0 \
+(\
+	\{\
+		\cf3 var\cf0  sig, env, sig1, env1, trig, thresh;\
+		trig = 1;\
+		thresh = \cf3 MouseY\cf0 .kr(0.9,0.01);\
+		env = \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .new([0,1,0],[0.2,0.8],[4,-1]),trig, doneAction:2,timeScale:31);\
+		sig = \cf3 Clip\cf0 .ar(\cf3 SinOsc\cf0 .ar(25,0,10),-1 * thresh, thresh) * 0.3 * \cf3 LFPulse\cf0 .kr(15,0,0.6,1) * env;\
+		sig = \cf3 Pan2\cf0 .ar(sig,0);\
+	\}.play;		\
+)\
+\
+(\
+	\{\
+		\cf3 var\cf0  sig, env, sig1, env1, trig, thresh;\
+		thresh = \cf3 MouseY\cf0 .kr(0.9,0.01);\
+		trig =1;\
+		env1 = \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .new([0,1,0],[0.2,0.8],[4,-1]),trig, doneAction:2, timeScale:31);\
+		sig1 = \cf3 Clip\cf0 .ar(\cf3 LFPar\cf0 .ar(25,0,1),-1 * thresh,thresh) * 0.3 * \cf3 LFPulse\cf0 .kr(15,0,0.6,1) * env1;\
+		sig1 = \cf3 Pan2\cf0 .ar(sig1,0);\
+		\
+	\}.play;\
+)\
+\
+(\
+	\{\
+		\cf3 var\cf0  sig, env, sig1, env1, trig, thresh;\
+		thresh = \cf3 MouseY\cf0 .kr(0.9,0.01);\
+		trig =1;\
+		\cf2 //env1 = EnvGen.kr(Env.new([0,1,0],[0.2,0.8],[4,-1]),trig,doneAction:2, timeScale:31);\cf0 \
+		sig1 = \cf3 Clip\cf0 .ar(\cf3 LFCub\cf0 .ar(\cf3 MouseX\cf0 .kr(10,100),0,1),-1 * thresh,thresh) * 0.3 * \cf3 LFPulse\cf0 .kr(15,0,0.6,1); \cf2 //* env1;\cf0 \
+		sig1 = \cf3 Pan2\cf0 .ar(sig1,0);\
+		\
+	\}.play;\
+)\
+\
+\cf2 //the original ... still more interesting !\cf0 \
+(\
+	\{\
+	\cf3 var\cf0  sig, env, sig1, env1, trig, out, ts;\
+		\
+		ts = 31;\
+		trig = 1;\
+		env = \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .new([0,1,1,0],[0.4,0.4,0.2],[4,1,-4]),trig, timeScale:ts);\
+		env1 = \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .new([0,1,0],[0.8,0.2],[3,-4]), trig, timeScale:ts);\
+		\
+		sig = \cf3 LFCub\cf0 .ar(\cf3 Rand\cf0 (25,50),1) * 0.2 * \cf3 LFPulse\cf0 .kr(15,0,0.4,1) * env;\
+		//sig = \cf3 HPF\cf0 .ar(sig,\cf3 XLine\cf0 .kr(\cf3 Rand\cf0 (100,200),1000,ts));\
+		sig = \cf3 Pan2\cf0 .ar(sig,0);\
+		sig1 = \cf3 LFPar\cf0 .ar(\cf3 Rand\cf0 (25,50),5).clip2(\cf3 Rand\cf0 (0.2,0.05)) * 0.3 * \cf3 LFPulse\cf0 .kr(15,0,0.6,1) * env1;\
+	//	sig1 = \cf3 HPF\cf0 .ar(sig1,\cf3 Rand\cf0 (100,200));\
+		sig1 = \cf3 Pan2\cf0 .ar(sig1,0);\
+\
+		out = sig + sig1 * \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .linen(0.001,1,0.001),trig,timeScale:ts, doneAction:2);\
+		\
+	\}.play;\
+)\
+\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf3 Env\cf0 .new([0,1,0],[0.95,0.05],[4,-2]).plot; \
+\cf3 Env\cf0 .new([0,1,0],[0.4,0.6],[4,-1]).plot;\
+\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 //stars shimmer sound\cf0 \
+(\
+\{\
+	\cf3 var\cf0  sig;\
+	\
+	sig = \cf3 Mix\cf0 .fill(3,\{\cf3 arg\cf0  count;\
+		\cf3 var\cf0  out, trig, freq;\
+		freq = 3000;\
+		trig = \cf3 Dust\cf0 .kr(10);\
+		out = \cf3 BPF\cf0 .ar(\cf3 WhiteNoise\cf0 .ar(10),freq + (200 * count), 0.01) * 0.2 * \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .perc(0.001,0.03),trig);\
+		out = \cf3 Pan2\cf0 .ar(out,\cf3 Rand\cf0 (-0.7,0.7));\
+	\});\
+\
+\}.play;\
+)\
+\
+\cf2 //stars shimmer sound with tones\cf0 \
+(\
+	\{			\
+		\cf3 Mix\cf0 .fill(3,\{\cf3 arg\cf0  count;\
+		\cf3 var\cf0  trig, freq, out;\
+		freq = 4000 + (400 * count);\
+		trig = \cf3 Dust\cf0 .kr(2);\
+		out = \cf3 Saw\cf0 .ar(freq ,0.2) * \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .perc(0.001,0.01),trig);\
+		out = \cf3 Pan2\cf0 .ar(out,\cf3 Rand\cf0 (-0.7,0.7));\
+		\});\
+	\}.play;\
+)\
+\
+\cf2 //whomp attempt\cf0 \
+(\
+	\{\
+		\cf3 var\cf0  width, env, p_env, sig;\
+		\
+		width = \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .new([0.1,0.5],0.7,-3),1);\
+		env = \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .new([0,1,0],[1,0.001],5),doneAction:2);\
+		p_env = \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .new([100,4000],0.4,-3),1);\
+		\
+		sig = \cf3 LPF\cf0 .ar(\cf3 LFPar\cf0 .ar(40,0,10).softclip, p_env) * env;\
+		\cf2 //sig = Compander.ar(sig,sig,0.1,1,0.5,0.01,0.01);\cf0 \
+		\cf2 //sig = sig + VarSaw.ar(p_env,0,width,10).distort;\cf0 \
+		sig = \cf3 Pan2\cf0 .ar(sig * 0.5, 0);\
+	\
+	\}.play;\
+	\
+)\
+\
+\
+\pard\pardeftab560\ql\qnatural
+\cf0 (  \cf2 //wrong sound world ... need more glitch and nasty\cf0 \
+\cf3 SynthDef\cf0 (\cf4 \\resDrum\cf0 , \{ \cf3 |freq = 440, sustain = 0.1, amp = 0.5|\cf0 \
+	\
+	\cf3 var\cf0 	 sig, n_env, freqs, amps, decs;\
+	\
+	freqs = [freq, freq * \cf3 Rand\cf0 (1.5,2), freq * \cf3 Rand\cf0 (2.5,3), freq * \cf3 Rand\cf0 (3.1,3.5)];\
+	amps = \cf3 Array\cf0 .fill(4,\{amp * \cf3 Rand\cf0 (0.8,1.2)\});\
+	decs = \cf3 Array\cf0 .fill(4,\{sustain * \cf3 Rand\cf0 (0.8,1.2)\});\
+	n_env = \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .perc(0.001,0.01),1);\
+	sig = \cf3 Klank\cf0 .ar(`[ freqs, amps, decs],\cf3 PinkNoise\cf0 .ar(0.01) * n_env);\
+	sig = sig * \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .linen(0.01,0.98,0.01),1, timeScale: sustain, doneAction:2);\
+	\
+	\cf3 Out\cf0 .ar(0, sig ! 2)\
+\}).add;\
+)\
+\
+(\
+\cf3 SynthDef\cf0 (\cf4 \\buzz\cf0 , \{ \cf3 |freq = 440, sustain = 0.1, amp = 0.5|\cf0 \
+	\
+	\cf3 var\cf0 	 sig, n_env, freqs, amps, decs;\
+	\
+	sig = \cf3 Saw\cf0 .ar()\
+	sig = sig * \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .linen(0.01,0.98,0.01),1, timeScale: sustain, doneAction:2);\
+	\
+	\cf3 Out\cf0 .ar(0, sig ! 2)\
+\}).add;\
+)\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 \
+\
+\pard\pardeftab560\ql\qnatural
+\cf3 TempoClock\cf0 .default.tempo = 120/60;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 \
+	(\
+	\
+	p = \cf3 Pxrand\cf0 ([\
+\pard\pardeftab560\ql\qnatural
+\cf0 		\cf3 Pbind\cf0 (\
+				\cf4 \\instrument\cf0 , \cf4 \\resDrum\cf0 ,\
+				\cf4 \\dur\cf0 , \cf3 Pxrand\cf0 ([0.25,0.25,0.5,0.125], 20),\
+				\cf4 \\sustain\cf0 ,\cf3 Pxrand\cf0 ([0.2,0.4], 20), \
+				\cf4 \\freq\cf0 , \cf3 Pxrand\cf0 ([200], 20),\
+				\cf4 \\amp\cf0 , 1\
+			),\
+			\
+		\cf3 Pbind\cf0 (\
+				\cf4 \\instrument\cf0 , \cf4 \\resDrum\cf0 ,\
+				\cf4 \\dur\cf0 , \cf3 Pxrand\cf0 ([0.125], 5),\
+				\cf4 \\sustain\cf0 ,\cf3 Pseq\cf0 ([0.3], 5), \
+				\cf4 \\freq\cf0 , 200,\
+				\cf4 \\amp\cf0 , 0.5\
+				)\
+			\
+				\
+		],\cf3 inf\cf0 ).play(\cf3 TempoClock\cf0 );\
+	)\
+		\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf0 \
+			\
+\
+\
+\
+	\{\
+	\
+	\cf3 var\cf0  sig, rate = 10;\
+		\
+	sig = \cf3 Pan2\cf0 .ar(\cf3 Klank\cf0 .ar(`[[200, 671, 1153, 1723], \cf3 nil\cf0 , [0.1, 0.1, 0.1, 0.1]],\cf3 PinkNoise\cf0 .ar(0.01) * \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .perc(0.001,0.01),\cf3 Impulse\cf0 .kr(rate)))) ;\
+	\}.play;\
+)\
+\
+\
+\
+\
+\
+}
