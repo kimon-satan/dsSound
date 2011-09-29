@@ -61,6 +61,8 @@
 		~activeNames[msg[1]] = msg[2];\
 		if(msg[2] == \cf3 \\strobingRings\cf0 )\{~activeSynths[msg[1]] = \cf2 Synth\cf0 .new(\cf3 \\strobingRings\cf0 )\};		if(msg[2] == \cf3 \\strobingLines\cf0 )\{~activeSynths[msg[1]] = \cf2 Synth\cf0 .new(\cf3 \\strobingLines\cf0 )\};\
 		if(msg[2] == \cf3 \\regPulsingRings\cf0 )\{~activeSynths[msg[1]] = \cf2 Synth\cf0 .new(\cf3 \\regPulsingRings\cf0 )\};\
+		if(msg[2] == \cf3 \\statFlow\cf0 )\{~activeSynths[msg[1]] = \cf2 Synth\cf0 .new(\cf3 \\statFlow\cf0 )\};\
+\
 \
 		\
 	\}).add;\
@@ -153,6 +155,22 @@
 				\
 				\}).start;\
 			\};\
+			\
+			if(~activeNames[msg[1]] == \cf3 \\statFlow\cf0 )\{\
+					if(msg[5] < 0)\{\
+				~activeTasks[msg[1]] = \cf2 Task\cf0 (\{\
+					msg.postln;\
+					\
+					~activeSynths[msg[1]].set(\cf3 \\gate\cf0 , 0);\
+					\
+					(msg[4]/60).wait;\
+					\
+					~activeSynths[msg[1]] = Synth.new(\\statFlow,[\\size, msg[2]]);\
+				\
+				\}).start;\
+					\};\
+			\};\
+\
 \
 			\
 		\};\
