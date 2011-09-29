@@ -1,0 +1,110 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1038\cocoasubrtf360
+{\fonttbl\f0\fnil\fcharset0 Monaco;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;\red0\green115\blue0;
+\red191\green0\blue0;\red0\green0\blue191;\red0\green115\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs28 \cf2 (\
+\
+	\cf3 SynthDef\cf2 (\cf4 \\strobingRings\cf2 ,\{\cf3 arg\cf2  size = 0, width = 0.05, pulse = 15, gate = 1, pan = 0;\
+	\
+		\cf3 var\cf2  sig, p_env, trig, filfreq, amp;\
+		\
+		amp = 0.01 + (size/5);\
+		filfreq = min(300, 350 * (1-amp).sqrt); \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural\pardirnatural
+\cf2 		trig = \cf3 Impulse\cf2 .kr(pulse);\
+		p_env = \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 .linen(0,width,0),trig);\
+		sig = \cf3 LFNoise0\cf2 .ar(\cf3 LFNoise1\cf2 .kr(pulse,100,200),0.5) * p_env;\
+		sig = \cf3 HPF\cf2 .ar(sig,filfreq);\
+		sig = \cf3 Pan2\cf2 .ar(sig,0);\
+		sig = sig * amp * \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 .asr(1,1,0.01),gate, doneAction:2);\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 		\cf3 Out\cf2 .ar(0,sig);\
+		\
+	\}).send(s);\
+\
+	\cf3 SynthDef\cf2 (\cf4 \\strobingLines\cf2 ,\{\cf3 arg\cf2  size = 0, ch = 0, cut = 1, width = 0.01, pulse = 15, gate = 1, pan = 0;\
+	\
+		\cf3 var\cf2  a, b, sig, p_env, trig, filfreq, amp;\
+		\
+		amp = 0.01 + (size/4);\
+		filfreq = min(300, 350 * (1-amp).sqrt); \
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural\pardirnatural
+\cf2 		trig = \cf3 Impulse\cf2 .kr(pulse);\
+		p_env = \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 .linen(0,width,0),trig);\
+		\
+		a = \cf3 LFNoise0\cf2 .ar(\cf3 LFNoise0\cf2 .kr(pulse,25,50),5).clip2(\cf3 LFNoise0\cf2 .kr(pulse,0.45,0.5)) * p_env;\
+		a = a + \cf3 HPF\cf2 .ar(a,\cf3 LFNoise0\cf2 .kr(pulse,250,300));\
+		\
+		b = \cf3 LFNoise0\cf2 .ar(\cf3 LFNoise0\cf2 .kr(pulse,25,50),0.5).clip * p_env;\
+		b = b + \cf3 HPF\cf2 .ar(b,\cf3 LFNoise0\cf2 .kr(pulse,250,300));\
+		\
+		sig = (a * (1 - ch)) + (b * ch) * cut; \cf5 //hacky switching btwn synths within the same def\cf2 \
+		\
+		sig = \cf3 Pan2\cf2 .ar(sig,0);\
+		sig = sig * amp * \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 .asr(1,1,0.01),gate, doneAction:2);\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 		\cf3 Out\cf2 .ar(0,sig);\
+		\
+	\}).send(s);\
+	\
+	\cf3 SynthDef\cf2 (\cf4 \\strobingLinesEvent\cf2 ,\{\cf3 arg\cf2  size = 0, gate = 1, length = 1, pan = 0;\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural\pardirnatural
+\cf2 		\
+		\cf3 var\cf2  sig, env, trig, pulse, amp;\
+		\
+		amp = 0.01 + (size/2);\
+		pulse = 15;\
+		trig = \cf3 Impulse\cf2 .kr(pulse);\
+		env = \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 .linen(0,0.01,0),trig);\
+		sig = \cf3 LFNoise0\cf2 .ar(\cf3 Rand\cf2 (50,100),1) * env;\
+		sig = sig * \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 .linen(0.3,0.69,0.01),1,timeScale:length * 0.75, doneAction:2) * amp;\
+		sig = \cf3 Pan2\cf2 .ar(sig,0);\
+		\cf3 Out\cf2 .ar(0,sig);\
+		\
+	\}).send(s);\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 	\
+	\
+	\cf3 SynthDef\cf2 (\cf4 \\regPulsingRings, \cf2 \{ \cf3 arg\cf2  size, dur, gate = 1, gate1 = 0, gate2 = 0;\
+		\
+		\cf6 var\cf0  sig, amp, mod, modFreq, \
+			trig, env, c_env, trig2, env2 ,c_env2;\cf2 \
+		\
+		\cf0 amp = 0.01 + (size/2);\cf2 \
+		\cf0 \
+		\
+		trig = \cf6 Trig1\cf0 .kr(gate1, dur);\
+		env = \cf6 EnvGen\cf0 .kr(\cf6 Env\cf0 .new([0,-1,0],[0.8,0.2],\cf7 'sine'\cf0 ),gate1, timeScale: dur, levelScale: 6);\
+		c_env = \cf6 EnvGen\cf0 .kr(\cf6 Env\cf0 .new([0,-0.92,0],[0.8,0.2],[-2,6]),gate1, timeScale: dur);\
+		\
+		trig2 = \cf6 Trig1\cf0 .kr(gate2, dur);\
+		env2 = \cf6 EnvGen\cf0 .kr(\cf6 Env\cf0 .new([0,1,0],[0.5,0.5],\cf7 'sine'\cf0 ),gate2, timeScale: dur, levelScale: 3);\
+		c_env2 = \cf6 EnvGen\cf0 .kr(\cf6 Env\cf0 .new([0,-0.1,0],[0.5,0.5],'sine'),gate2, timeScale: dur);\
+		\
+		mod = \cf6 SinOsc\cf0 .kr(6,0,6 * (1-trig) * (1-trig2));\
+		sig = \cf6 SinOsc\cf0 .ar(50 + env + env2 + mod,0,2).clip2(0.97 + (c_env * trig) + (c_env2  * trig2)) * 0.5;\
+\cf2 		\
+		sig = \cf3 Pan2\cf2 .ar(sig, 0);\
+		\cf0 sig = sig * amp * \cf6 EnvGen\cf0 .kr(\cf6 Env\cf0 .asr(1,1,0.2),gate, doneAction:2);\cf2 \
+		Out.ar(0,sig);\
+		\
+	\}).send(s);\
+	\
+	\cf3 SynthDef\cf2 (\cf4 \\shitBeep\cf2 ,\{\cf3 arg\cf2  size = 0, gate = 1, pan = 0, length = 0.25;\
+	\
+		\cf3 var\cf2  sig, amp;\
+		amp = 0.01 + (size/4);\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\pardeftab560\ql\qnatural\pardirnatural
+\cf2 		sig = \cf3 SinOsc\cf2 .ar(5000,0,5).clip * 0.2; \
+		sig = sig * amp * \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 .linen(0,length,0), doneAction:2);\
+		sig = \cf3 Pan2\cf2 .ar(sig, 0);\
+		\cf3 Out\cf2 .ar(0,sig);\
+		\
+	\}).send(s);\
+	\
+	\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 \
+)}

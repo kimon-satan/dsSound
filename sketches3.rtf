@@ -137,7 +137,9 @@
 		pulse = 15;\
 		trig = \cf3 Impulse\cf0 .kr(pulse);\
 		env = \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .linen(0,0.01,0),trig);\
-		b = \cf3 LFNoise0\cf0 .ar(\cf3 100\cf0 ,0.5) * env;\
-		b = b * 0.5 * \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .perc,1, doneAction:2);\
+		b = \cf3 LFNoise0\cf0 .ar(\cf3 60\cf0 ,0.5) * env;\
+		b = b * \cf3 EnvGen\cf0 .kr(\cf3 Env\cf0 .new([0,1],[1],[4]),0.5, doneAction:2);\
 	\}.play;\
-)}
+)\
+\
+}
