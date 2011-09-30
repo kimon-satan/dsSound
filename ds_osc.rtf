@@ -1,50 +1,50 @@
 {\rtf1\ansi\ansicpg1252\cocoartf1038\cocoasubrtf360
 {\fonttbl\f0\fnil\fcharset0 Monaco;}
-{\colortbl;\red255\green255\blue255;\red0\green0\blue191;\red0\green115\blue0;\red191\green0\blue0;
-}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;\red0\green115\blue0;
+\red191\green0\blue0;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
-\f0\fs28 \cf0 \
+\f0\fs28 \cf2 \
 \
 (\
 \
-	~activeSynths = \cf2 Array\cf0 .newClear(20);\
-	~activeTasks = \cf2 Array\cf0 .newClear(20);\
-	~activeNames = \cf2 Array\cf0 .newClear(20);\
+	~activeSynths = \cf3 Array\cf2 .newClear(20);\
+	~activeTasks = \cf3 Array\cf2 .newClear(20);\
+	~activeNames = \cf3 Array\cf2 .newClear(20);\
 	\
 \
 	~init.remove;\
-	~init=\cf2 nil\cf0 ;\
-	~init = \cf2 OSCresponderNode\cf0 (\cf2 nil\cf0 , \cf3 '/init'\cf0 , \{\cf2 |i, r, msg|\cf0  \
+	~init=\cf3 nil\cf2 ;\
+	~init = \cf3 OSCresponderNode\cf2 (\cf3 nil\cf2 , \cf4 '/init'\cf2 , \{\cf3 |i, r, msg|\cf2  \
 	\
 	(msg).postln;  \
 	\
 	\}).add;\
 	\
 	~wave.remove;\
-	~wave=\cf2 nil\cf0 ;\
-	~wave = \cf2 OSCresponderNode\cf0 (\cf2 nil\cf0 , \cf3 '/wave'\cf0 , \{\cf2 |i, r, msg|\cf0  \
+	~wave=\cf3 nil\cf2 ;\
+	~wave = \cf3 OSCresponderNode\cf2 (\cf3 nil\cf2 , \cf4 '/wave'\cf2 , \{\cf3 |i, r, msg|\cf2  \
 	\
 	msg.postln;\
-	\cf4 // replaced saw with LFCub ... low freqs better for overall mix\cf0 \
+	\cf5 // replaced saw with LFCub ... low freqs better for overall mix\cf2 \
 	\
 	\
 	\{\
-	\cf2 var\cf0  sig, env, sig1, env1, trig, out, ts;\
+	\cf3 var\cf2  sig, env, sig1, env1, trig, out, ts;\
 				\
 		ts = 32;\
 		trig = 1;\
-		env = \cf2 EnvGen\cf0 .kr(\cf2 Env\cf0 .new([0,1,1,0],[0.4,0.4,0.2],[4,1,-4]),trig, timeScale:ts);\
-		env1 = \cf2 EnvGen\cf0 .kr(\cf2 Env\cf0 .new([0,1,0],[0.8,0.2],[3,-4]), trig, timeScale:ts);\
+		env = \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 .new([0,1,1,0],[0.4,0.4,0.2],[4,1,-4]),trig, timeScale:ts);\
+		env1 = \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 .new([0,1,0],[0.8,0.2],[3,-4]), trig, timeScale:ts);\
 		\
-		sig = \cf2 LFCub\cf0 .ar(\cf2 Rand\cf0 (25,50),1) * 0.2 * \cf2 LFPulse\cf0 .kr(15,0,0.4,1) * env;\
-		\cf4 //sig = HPF.ar(sig,XLine.kr(Rand(100,200),1000,ts));\cf0 \
-		sig = \cf2 Pan2\cf0 .ar(sig,0);\
-		sig1 = \cf2 LFPar\cf0 .ar(\cf2 Rand\cf0 (25,50),5).clip2(\cf2 Rand\cf0 (0.2,0.05)) * 0.3 * \cf2 LFPulse\cf0 .kr(15,0,0.6,1) * env1;\
-		\cf4 //sig1 = HPF.ar(sig1,Rand(100,200));\cf0 \
-		sig1 = \cf2 Pan2\cf0 .ar(sig1,0);\
+		sig = \cf3 LFCub\cf2 .ar(\cf3 Rand\cf2 (25,50),1) * 0.2 * \cf3 LFPulse\cf2 .kr(15,0,0.4,1) * env;\
+		\cf5 //sig = HPF.ar(sig,XLine.kr(Rand(100,200),1000,ts));\cf2 \
+		sig = \cf3 Pan2\cf2 .ar(sig,0);\
+		sig1 = \cf3 LFPar\cf2 .ar(\cf3 Rand\cf2 (25,50),5).clip2(\cf3 Rand\cf2 (0.2,0.05)) * 0.3 * \cf3 LFPulse\cf2 .kr(15,0,0.6,1) * env1;\
+		\cf5 //sig1 = HPF.ar(sig1,Rand(100,200));\cf2 \
+		sig1 = \cf3 Pan2\cf2 .ar(sig1,0);\
 \
-		out = sig + sig1 * \cf2 EnvGen\cf0 .kr(\cf2 Env\cf0 .linen(0.001,1,0.001),trig,timeScale:ts, doneAction:2);\
+		out = sig + sig1 * \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 .linen(0.001,1,0.001),trig,timeScale:ts, doneAction:2);\
 		\
 		\
 	\}.play;\
@@ -52,84 +52,84 @@
 	\}).add;\
 	\
 	~nStar.remove;\
-	~nStar =\cf2 nil\cf0 ;\
-	~nStar = \cf2 OSCresponderNode\cf0 (\cf2 nil\cf0 , \cf3 '/newStar'\cf0 , \{\cf2 |i, r, msg|\cf0  \
+	~nStar =\cf3 nil\cf2 ;\
+	~nStar = \cf3 OSCresponderNode\cf2 (\cf3 nil\cf2 , \cf4 '/newStar'\cf2 , \{\cf3 |i, r, msg|\cf2  \
 	\
-	\cf2 var\cf0  index;\
+	\cf3 var\cf2  index;\
 		msg.postln;	\
 		\
 		~activeNames[msg[1]] = msg[2];\
-		if(msg[2] == \cf3 \\strobingRings\cf0 )\{~activeSynths[msg[1]] = \cf2 Synth\cf0 .new(\cf3 \\strobingRings\cf0 )\};		if(msg[2] == \cf3 \\strobingLines\cf0 )\{~activeSynths[msg[1]] = \cf2 Synth\cf0 .new(\cf3 \\strobingLines\cf0 )\};\
-		if(msg[2] == \cf3 \\regPulsingRings\cf0 )\{~activeSynths[msg[1]] = \cf2 Synth\cf0 .new(\cf3 \\regPulsingRings\cf0 )\};\
-		if(msg[2] == \cf3 \\statFlow\cf0 )\{~activeSynths[msg[1]] = \cf2 Synth\cf0 .new(\cf3 \\statFlow\cf0 )\};\
+		if(msg[2] == \cf4 \\strobingRings\cf2 )\{~activeSynths[msg[1]] = \cf3 Synth\cf2 .new(\cf4 \\strobingRings\cf2 )\};		if(msg[2] == \cf4 \\strobingLines\cf2 )\{~activeSynths[msg[1]] = \cf3 Synth\cf2 .new(\cf4 \\strobingLines\cf2 )\};\
+		if(msg[2] == \cf4 \\regPulsingRings\cf2 )\{~activeSynths[msg[1]] = \cf3 Synth\cf2 .new(\cf4 \\regPulsingRings\cf2 )\};\
+		if(msg[2] == \cf4 \\statFlow\cf2 )\{~activeSynths[msg[1]] = \cf3 Synth\cf2 .new(\cf4 \\statFlow\cf2 )\};\
 \
 \
 		\
 	\}).add;\
 	\
 	~eStar.remove;\
-	~eStar =\cf2 nil\cf0 ;\
-	~eStar = \cf2 OSCresponderNode\cf0 (\cf2 nil\cf0 , \cf3 '/endStar'\cf0 , \{\cf2 |i, r, msg|\cf0  \
+	~eStar =\cf3 nil\cf2 ;\
+	~eStar = \cf3 OSCresponderNode\cf2 (\cf3 nil\cf2 , \cf4 '/endStar'\cf2 , \{\cf3 |i, r, msg|\cf2  \
 		\
-		\cf2 var\cf0  index;\
+		\cf3 var\cf2  index;\
 		msg.postln;	\
 		\
-		~activeNames[msg[1]] = \cf2 nil\cf0 ;\
-		if(~activeSynths[msg[1]] != \cf2 nil\cf0 )\{~activeSynths[msg[1]].set(\cf3 \\gate\cf0 , 0)\};\
-		if(~activeTasks[msg[1]] != \cf2 nil\cf0 )\{~activeTasks[msg[1]].stop; ~activeTasks[msg[1]] = \cf2 nil\cf0 \}; \cf4 //stop any task\cf0 \
+		~activeNames[msg[1]] = \cf3 nil\cf2 ;\
+		if(~activeSynths[msg[1]] != \cf3 nil\cf2 )\{~activeSynths[msg[1]].set(\cf4 \\gate\cf2 , 0)\};\
+		if(~activeTasks[msg[1]] != \cf3 nil\cf2 )\{~activeTasks[msg[1]].stop; ~activeTasks[msg[1]] = \cf3 nil\cf2 \}; \cf5 //stop any task\cf2 \
 		\
 	\}).add;\
 	\
 	~uStar.remove;\
-	~uStar =\cf2 nil\cf0 ;\
-	~uStar = \cf2 OSCresponderNode\cf0 (\cf2 nil\cf0 , \cf3 '/updateStar'\cf0 , \{\cf2 |i, r, msg|\cf0  \
+	~uStar =\cf3 nil\cf2 ;\
+	~uStar = \cf3 OSCresponderNode\cf2 (\cf3 nil\cf2 , \cf4 '/updateStar'\cf2 , \{\cf3 |i, r, msg|\cf2  \
 		\
-		\cf2 var\cf0  index;\
-	\cf4 //	msg.postln;	\cf0 \
+		\cf3 var\cf2  index;\
+	\cf5 //	msg.postln;	\cf2 \
 		\
-		~activeSynths[msg[1]].set(\cf3 \\size\cf0 , msg[2]);\
+		~activeSynths[msg[1]].set(\cf4 \\size\cf2 , msg[2]);\
 		\
 		if(msg[3] == 1)\{\
-			\cf4 //start new task for that synth\cf0 \
+			\cf5 //start new task for that synth\cf2 \
 			\
-			if(~activeTasks[msg[1]] != \cf2 nil\cf0 )\{~activeTasks[msg[1]].stop; ~activeTasks[msg[1]] = \cf2 nil\cf0 \};\
+			if(~activeTasks[msg[1]] != \cf3 nil\cf2 )\{~activeTasks[msg[1]].stop; ~activeTasks[msg[1]] = \cf3 nil\cf2 \};\
 			\
-			if(~activeNames[msg[1]] == \cf3 \\strobingRings\cf0 )\{\
-				~activeTasks[msg[1]] = \cf2 Task\cf0 (\{\
+			if(~activeNames[msg[1]] == \cf4 \\strobingRings\cf2 )\{\
+				~activeTasks[msg[1]] = \cf3 Task\cf2 (\{\
 					\
-					\cf2 var\cf0  n_pulse, n_width;\
+					\cf3 var\cf2  n_pulse, n_width;\
 					\
 					if(msg[5] > 0,\
 					\{n_pulse = rrand(18,22); n_width = 0.025\},\
 					\{n_pulse = rrand(7,12); n_width = 0.7/n_pulse\}\
 					);\
 					\
-					~activeSynths[msg[1]].set(\cf3 \\pulse\cf0 , n_pulse, \cf3 \\width\cf0 , n_width);\
+					~activeSynths[msg[1]].set(\cf4 \\pulse\cf2 , n_pulse, \cf4 \\width\cf2 , n_width);\
 					\
 					(msg[4]/60).wait;\
 					\
-					~activeSynths[msg[1]].set(\cf3 \\pulse\cf0 , 15,\cf3 \\width\cf0 , 0.04);\
+					~activeSynths[msg[1]].set(\cf4 \\pulse\cf2 , 15,\cf4 \\width\cf2 , 0.04);\
 					\
 				\}).start;\
 			\
 			\};\
 			\
-			if(~activeNames[msg[1]] == \cf3 \\strobingLines\cf0 )\{\
+			if(~activeNames[msg[1]] == \cf4 \\strobingLines\cf2 )\{\
 				\
 				if(msg[5] < 0)\{\
-					~activeTasks[msg[1]] = \cf2 Task\cf0 (\{\
-						~activeSynths[msg[1]].set(\cf3 \\ch\cf0 , 1);\
+					~activeTasks[msg[1]] = \cf3 Task\cf2 (\{\
+						~activeSynths[msg[1]].set(\cf4 \\ch\cf2 , 1);\
 						(msg[4]/60).wait;\
-						~activeSynths[msg[1]].set(\cf3 \\ch\cf0 , 0);\
+						~activeSynths[msg[1]].set(\cf4 \\ch\cf2 , 0);\
 					\}).start;\
 				\}\{\
-					~activeTasks[msg[1]] = \cf2 Task\cf0 (\{\
-						~activeSynths[msg[1]].set(\cf3 \\cut\cf0 , 0);\
-						\cf2 Synth\cf0 .new(\cf3 \\strobingLinesEvent\cf0 , [\cf3 \\size\cf0 ,msg[2],\cf3 \\length\cf0 ,msg[4]/60]);\
+					~activeTasks[msg[1]] = \cf3 Task\cf2 (\{\
+						~activeSynths[msg[1]].set(\cf4 \\cut\cf2 , 0);\
+						\cf3 Synth\cf2 .new(\cf4 \\strobingLinesEvent\cf2 , [\cf4 \\size\cf2 ,msg[2],\cf4 \\length\cf2 ,msg[4]/60]);\
 						\
 						(msg[4]/60).wait;\
 						\
-						~activeSynths[msg[1]].set(\cf3 \\cut\cf0 , 1);\
+						~activeSynths[msg[1]].set(\cf4 \\cut\cf2 , 1);\
 						\
 					\}).start;\
 					\
@@ -137,37 +137,39 @@
 				\
 			\};\
 			\
-			if(~activeNames[msg[1]] == \cf3 \\regPulsingRings\cf0 )\{\
+			if(~activeNames[msg[1]] == \cf4 \\regPulsingRings\cf2 )\{\
 				\
-				~activeTasks[msg[1]] = \cf2 Task\cf0 (\{\
+				~activeTasks[msg[1]] = \cf3 Task\cf2 (\{\
 					msg.postln;\
 					\
 					if(msg[5] > 0)\{\
-					~activeSynths[msg[1]].set(\cf3 \\dur\cf0 , msg[4]/60, \cf3 \\gate1\cf0 , 1);\
+					~activeSynths[msg[1]].set(\cf4 \\dur\cf2 , msg[4]/60, \cf4 \\gate1\cf2 , 1);\
 					\}\{\
-					~activeSynths[msg[1]].set(\cf3 \\dur\cf0 , msg[4]/60, \cf3 \\gate2\cf0 , 1);\
+					~activeSynths[msg[1]].set(\cf4 \\dur\cf2 , msg[4]/60, \cf4 \\gate2\cf2 , 1);\
 					\};\
 					\
 					0.1.wait;\
 					\
-					~activeSynths[msg[1]].set(\cf3 \\gate2\cf0 , 0, \cf3 \\gate1\cf0 , 0);\
+					~activeSynths[msg[1]].set(\cf4 \\gate2\cf2 , 0, \cf4 \\gate1\cf2 , 0);\
 					\
 				\
 				\}).start;\
 			\};\
 			\
-			if(~activeNames[msg[1]] == \cf3 \\statFlow\cf0 )\{\
+			if(~activeNames[msg[1]] == \cf4 \\statFlow\cf2 )\{\
 					if(msg[5] < 0)\{\
-				~activeTasks[msg[1]] = \cf2 Task\cf0 (\{\
-					msg.postln;\
-					\
-					~activeSynths[msg[1]].set(\cf3 \\gate\cf0 , 0);\
-					\
-					(msg[4]/60).wait;\
-					\
-					~activeSynths[msg[1]] = Synth.new(\\statFlow,[\\size, msg[2]]);\
-				\
-				\}).start;\
+						~activeTasks[msg[1]] = \cf3 Task\cf2 (\{\
+							\
+							msg.postln;\
+							\
+							~activeSynths[msg[1]].set(\cf4 \\cutGate\cf2 , 1, \cf4 \\eventDur\cf2 , msg[4]/60);\
+							\cf3 Synth\cf2 .new(\cf4 \\statFlowEvent\cf2 , [\cf4 \\size\cf2 , msg[2], \cf4 \\dur\cf2 , msg[4]/60]);\
+							\
+							(msg[4]/60).wait;\
+							\
+							~activeSynths[msg[1]].set(\cf4 \\cutGate\cf2 , 0);\
+						\
+						\}).start;\
 					\};\
 			\};\
 \
