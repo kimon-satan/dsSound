@@ -1,7 +1,7 @@
 {\rtf1\ansi\ansicpg1252\cocoartf1038\cocoasubrtf360
 {\fonttbl\f0\fnil\fcharset0 Monaco;}
 {\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red0\green0\blue191;\red0\green115\blue0;
-\red191\green0\blue0;\red0\green0\blue191;}
+\red191\green0\blue0;\red0\green0\blue191;\red0\green115\blue0;\red191\green0\blue0;}
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 
 \f0\fs28 \cf2 (\
@@ -67,25 +67,27 @@
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf2 	\
 	\
-	\cf3 SynthDef\cf2 (\cf4 \\regPulsingRings\cf2 , \{ \cf3 arg\cf2  size, dur, gate = 1, gate1 = 0, gate2 = 0;\
+	\cf3 SynthDef\cf2 (\cf4 \\regPulsingRings\cf2 , \{ \cf3 arg\cf2  size, dur = 1, gate = 1, gate1 = 0, gate2 = 0;\
 		\
-		\cf3 var\cf2  sig, amp, mod, modFreq, \
-			trig, env, c_env, trig2, env2 ,c_env2;\
+\cf0 		\cf6 var\cf0  sig, amp, mod, freq, clip, mul, modFreq, \
+			trig1, f_env1, c_env1, trig2, f_env2 ,c_env2;\cf2 \
 		\
-		amp = 0.01 + (size/2);\
+		amp = 0.01 + (size/4);\cf0 \
 		\
+		freq = \cf6 Rand\cf0 (50,240);\
 		\
-		trig = \cf3 Trig1\cf2 .kr(gate1, dur);\
-		env = \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 .new([0,-1,0],[0.8,0.2],\cf4 'sine'\cf2 ),gate1, timeScale: dur, levelScale: 6);\
-		c_env = \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 .new([0,-0.92,0],[0.8,0.2],[-2,6]),gate1, timeScale: dur);\
+		trig1 = \cf6 Trig1\cf0 .kr(gate1, dur);\
+		f_env1 = \cf6 EnvGen\cf0 .kr(\cf6 Env\cf0 .new([0,-0.03,0],[0.8,0.2],\cf7 'sine'\cf0 ),gate1, timeScale: dur, levelScale: freq);\
+		c_env1 = \cf6 EnvGen\cf0 .kr(\cf6 Env\cf0 .new([0,-0.6,0],[0.8,0.2],[-2,6]),gate1, timeScale: dur);\
 		\
-		trig2 = \cf3 Trig1\cf2 .kr(gate2, dur);\
-		env2 = \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 .new([0,1,0],[0.5,0.5],\cf4 'sine'\cf2 ),gate2, timeScale: dur, levelScale: 3);\
-		c_env2 = \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 .new([0,-0.1,0],[0.5,0.5],\cf4 'sine'\cf2 ),gate2, timeScale: dur);\
+		trig2 = \cf6 Trig1\cf0 .kr(gate2, dur);\
+		f_env2 = \cf6 EnvGen\cf0 .kr(\cf6 Env\cf0 .new([0,0.1,0],[0.5,0.5],\cf7 'sine'\cf0 ),gate2, timeScale: dur, levelScale: freq);\
+		c_env2 = \cf6 EnvGen\cf0 .kr(\cf6 Env\cf0 .new([0,-0.1,0],[0.5,0.5],\cf7 'sine'\cf0 ),gate2, timeScale: dur);\
 		\
-		mod = \cf3 SinOsc\cf2 .kr(6,0,6 * (1-trig) * (1-trig2));\
-		sig = \cf3 SinOsc\cf2 .ar(50 + env + env2 + mod,0,2).clip2(0.97 + (c_env * trig) + (c_env2  * trig2)) * 0.5;\
-		\
+		clip = 0.7 + c_env1 + c_env2;\
+		mod = \cf6 SinOsc\cf0 .kr(6,0,0.5) * (1 - trig1) * (1 - trig2); \cf8 //turn off for env1\cf0 \
+		sig = \cf6 LFPar\cf0 .ar(freq + f_env1 + f_env2,0,0.5 + mod).clip2(clip);\
+\cf2 \
 		sig = \cf3 Pan2\cf2 .ar(sig, 0);\
 		sig = sig * amp * \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 .asr(1,1,0.2),gate, doneAction:2);\
 		\cf3 Out\cf2 .ar(0,sig);\
@@ -93,12 +95,13 @@
 	\}).send(s);\
 	\
 	\
-	\cf3 SynthDef\cf2 (\cf4 \\statFlow\cf2 , \{ \cf3 arg\cf2  size, dur, gate = 1, cutGate = 0, eventDur = 1;\
+	\cf3 SynthDef\cf2 (\cf4 \\statFlow\cf2 , \{ \cf3 arg\cf2  size, dur, gate = 0, attack = 1;\
 		\
-		\cf3 var\cf2  freqArray, n_mod, swell, crackle, cut_env1, \cf0 cut_env2\cf2 ,sig, amp;\
+		\cf3 var\cf2  freqArray, n_mod, swell, crackle, cut_env1, cut_env2,sig, amp;\
 \pard\pardeftab560\ql\qnatural
-\cf2 		freqArray = [200,300,400,600];\
-		\
+\cf2 		\
+		freqArray = [200,300,400,600];\
+\
 		amp = 0.01 + (size);\
 		\
 		swell = \cf3 Mix\cf2 .fill(4,\{\cf3 arg\cf2  count;\
@@ -114,14 +117,11 @@
 		n_mod = \cf3 SinOsc\cf2 .kr(1/9,0,10,20);\
 		crackle = \cf3 HPF\cf2 .ar(\cf3 LFNoise0\cf2 .ar(n_mod,0.2),2000);\
 		\
-		cut_env1 = \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 .new([1,0,0,1],[0,0.8,0.2],3),cutGate,timeScale: eventDur);\
-		\cf0 cut_env2 = \cf6 EnvGen\cf0 .kr(\cf6 Env\cf0 .new([1,0,0,1],[0,1,0],1),cutGate,timeScale: eventDur);\cf2 \
-		\
-		sig = (swell \cf0 * cut_env1) \cf2 + (crackle * cut_env2);\
+		sig = swell + crackle;\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf2 		sig = \cf3 Pan2\cf2 .ar(sig, 0);\
-		sig = sig * amp * \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 .asr(1,1,0.2),gate, doneAction:2);\
+		sig = sig * amp * \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 .asr(attack,1,0.05),gate, doneAction:2);\
 		\cf3 Out\cf2 .ar(0,sig);\
 		\
 	\}).send(s);\
@@ -134,7 +134,7 @@
 		amp = size;\
 		bang_env = \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 .perc(0.05,1),gate);\
 		crackle_env = \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 .new([0,1,0],[0.05,0.45],[4,-4,-1]),gate, timeScale:dur);\
-		shoop_env = \cf6 EnvGen\cf0 .kr(\cf6 Env\cf0 .new([0,0,1,0],[0.4,0.6,0],[1,7,1]),gate, timeScale:dur);\cf2 \
+		shoop_env = \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 .new([0,0,1,0],[0.4,0.6,0],[1,7,1]),gate, timeScale:dur);\
 		bang = \cf3 LFNoise0\cf2 .ar(400,0.2) * bang_env;\
 		crackle = \cf3 Dust\cf2 .ar(50) * crackle_env;\
 		shoop = \cf3 HPF\cf2 .ar(\cf3 WhiteNoise\cf2 .ar(0.5),3000) * shoop_env;\
@@ -142,7 +142,7 @@
 		sig = bang + crackle + shoop;\
 						\
 		sig = \cf3 Pan2\cf2 .ar(sig, 0);\
-		\cf0 sig = sig * amp * \cf6 EnvGen\cf0 .kr(\cf6 Env\cf0 .linen(0.001,dur,0.01),gate, doneAction:2);\cf2 \
+		sig = sig * amp * \cf3 EnvGen\cf2 .kr(\cf3 Env\cf2 .linen(0.001,dur,0.01),gate, doneAction:2);\
 		\
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
 \cf2 		\cf3 Out\cf2 .ar(0,sig);\
