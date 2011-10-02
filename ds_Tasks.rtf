@@ -1,0 +1,54 @@
+{\rtf1\ansi\ansicpg1252\cocoartf1038\cocoasubrtf360
+{\fonttbl\f0\fnil\fcharset0 Monaco;}
+{\colortbl;\red255\green255\blue255;\red0\green0\blue0;\red191\green0\blue0;\red0\green0\blue191;
+\red0\green115\blue0;}
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+
+\f0\fs28 \cf2 (\
+\
+\cf3 //Tasks are stored in functions then called later with .value and assigned to ~activeTasks[x]\cf2 \
+\
+	~omTask = \{\cf4 arg\cf2  index = 0, size = 0;\
+		\
+		
+\fs26 \cf4 Task\cf2 \{\
+			\
+		\cf4 var\cf2  sustain = 6, transition = 4, overlap = 5, \
+\pard\pardeftab560\ql\qnatural
+\cf2 			period = transition*2+sustain/overlap;\
+			\
+			~activeSynths[index] = \cf4 Array\cf2 .newClear(5); \cf3 //store an array of synths \
+															//in the synth index\cf2 \
+			\
+			\cf4 inf\cf2 .do\{\cf4 arg\cf2  count;\
+				\
+				\cf4 var\cf2  base_freq, bohlen_ratios, bohlen_chord;\
+				\
+				bohlen_ratios = [1,25/21,9/7,7/5,5/3,9/5,15/7,7/3,25/9,3];\
+				base_freq = bohlen_ratios.choose * 100;\
+				\
+				~activeSynths[index][count%overlap] = \cf4 Synth\cf2 (\cf5 \\Om\cf2 , [\
+					\cf5 \\atk\cf2 , transition,\
+					\cf5 \\sus\cf2 , sustain,\
+					\cf5 \\rel\cf2 , transition,\
+					\cf5 \\pan\cf2 , 1.0.rand2\
+				]).setn( \
+					\cf5 \\freqs\cf2 , \{\cf4 arg\cf2  i; base_freq + base_freq * 0.78 * i\}.dup(12),\
+					\cf5 \\rings\cf2 , \{0.1.rrand(3)\}.dup(12)\
+				);\
+				\
+				period.wait;\
+				\
+			\};
+\fs28 \
+		\};\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural\pardirnatural
+\cf2 	\};\
+\
+)\
+\
+x= ~omTask.value(0,1).play;\
+\pard\pardeftab560\ql\qnatural
+
+\fs26 \cf2 \
+}

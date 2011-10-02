@@ -62,8 +62,8 @@
 		if(msg[2] == \cf4 \\strobingRings\cf2 )\{~activeSynths[msg[1]] = \cf3 Synth\cf2 .new(\cf4 \\strobingRings\cf2 )\};		if(msg[2] == \cf4 \\strobingLines\cf2 )\{~activeSynths[msg[1]] = \cf3 Synth\cf2 .new(\cf4 \\strobingLines\cf2 )\};\
 		if(msg[2] == \cf4 \\regPulsingRings\cf2 )\{~activeSynths[msg[1]] = \cf3 Synth\cf2 .new(\cf4 \\regPulsingRings\cf2 )\};\
 		if(msg[2] == \cf4 \\statFlow\cf2 )\{~activeSynths[msg[1]] = \cf3 Synth\cf2 .new(\cf4 \\statFlow\cf2 , [\cf4 \\gate\cf2 , 1])\};\
-\
-\
+		if(msg[2] == \cf4 \\om\cf2 )\{~activeTasks[msg[1]] = ~omTask.value(msg[1], 0 ).play\}; \
+			\
 		\
 	\}).add;\
 	\
@@ -75,7 +75,22 @@
 		msg.postln;	\
 		\
 		~activeNames[msg[1]] = \cf3 nil\cf2 ;\
-		if(~activeSynths[msg[1]] != \cf3 nil\cf2 )\{~activeSynths[msg[1]].set(\cf4 \\gate\cf2 , 0)\};\
+		\
+		\cf5 // if there is an array of synths\cf2 \
+		if(~activeSynths[msg[1]].size() > 1)\{ \
+			\
+			~activeSynths[msg[1]].size().do\{\cf3 |i|\cf2 \
+				\
+					if(~activeSynths[msg[1]][i] != \cf3 nil\cf2 )\{~activeSynths[msg[1]][i].set(\cf4 \\gate\cf2 , 0)\};\
+					\
+				\};\
+				\
+			~activeSynths[msg[1]] = \cf3 nil\cf2 ;\
+			\
+			\}\{\
+				if(~activeSynths[msg[1]] != \cf3 nil\cf2 )\{~activeSynths[msg[1]].set(\cf4 \\gate\cf2 , 0)\}; \cf5 //\cf2 \
+			\};\
+			\
 		if(~activeTasks[msg[1]] != \cf3 nil\cf2 )\{~activeTasks[msg[1]].stop; ~activeTasks[msg[1]] = \cf3 nil\cf2 \}; \cf5 //stop any task\cf2 \
 		\
 	\}).add;\
@@ -87,14 +102,26 @@
 		\cf3 var\cf2  index;\
 	\cf5 //	msg.postln;	\cf2 \
 		\
-		if(~activeSynths[msg[1]] != \cf3 nil\cf2 )\{ \cf5 //sometimes I stop the synth\cf2 \
-			~activeSynths[msg[1]].set(\cf4 \\size\cf2 , msg[2]);\
+		if(~activeSynths[msg[1]].size() > 1)\{ \
+			\
+			~activeSynths[msg[1]].size().do\{\cf3 |i|\cf2 \
+				\
+					if(~activeSynths[msg[1]][i] != \cf3 nil\cf2 )\{~activeSynths[msg[1]][i].set(\cf4 \\size\cf2 , msg[2])\};\
+					\
+				\};\
+			\
+		\}\{\
+			\
+			if(~activeSynths[msg[1]] != \cf3 nil\cf2 )\{ \cf5 //sometimes I stop the synth\cf2 \
+				~activeSynths[msg[1]].set(\cf4 \\size\cf2 , msg[2]);\
+			\};	\
 		\};\
 		\
 		if(msg[3] == 1)\{\
 			\cf5 //start new task for that synth\cf2 \
 			\
-			if(~activeTasks[msg[1]] != \cf3 nil\cf2 )\{~activeTasks[msg[1]].stop; ~activeTasks[msg[1]] = \cf3 nil\cf2 \};\
+			\cf5 //if(~activeTasks[msg[1]] != nil)\{~activeTasks[msg[1]].stop; ~activeTasks[msg[1]] = nil\};\cf2 \
+			\cf5 //we don't need this anymore ... ds_graphics prevents overlapping of tasks\cf2 \
 			\
 			if(~activeNames[msg[1]] == \cf4 \\strobingRings\cf2 )\{\
 				~activeTasks[msg[1]] = \cf3 Task\cf2 (\{\
@@ -162,19 +189,29 @@
 					if(msg[5] < 0)\{\
 						~activeTasks[msg[1]] = \cf3 Task\cf2 (\{\
 							\
+							\cf3 var\cf2  dur, a_phase, rq_phase;\
 							msg.postln;\
 							\
+							dur = msg[4]/60;\
 							~activeSynths[msg[1]].set(\cf4 \\gate\cf2 , 0);\
 							~activeSynths[msg[1]] = \cf3 nil\cf2 ;\
-							\cf3 Synth\cf2 .new(\cf4 \\statFlowEvent\cf2 , [\cf4 \\size\cf2 , msg[2], \cf4 \\dur\cf2 , msg[4]/60]);\
+							\cf3 Synth\cf2 .new(\cf4 \\statFlowEvent\cf2 , [\cf4 \\size\cf2 , msg[2], \cf4 \\dur\cf2 , dur]);\
 							\
-							(msg[4] * 0.8/60).wait;\
+							(dur * 0.8).wait;\
 							\
-							~activeSynths[msg[1]] = \cf3 Synth\cf2 .new(\cf4 \\statFlow\cf2 , [\cf4 \\size\cf2 , msg[2], \cf4 \\attack\cf2 , msg[4] * 0.2/60, \cf4 \\gate\cf2 , 1]);\
+							a_phase = pi/2 * (dur/9 * 0.8);\
+							rq_phase = a_phase - pi/2;\
+							~activeSynths[msg[1]] = \cf3 Synth\cf2 .new(\cf4 \\statFlow\cf2 , [\cf4 \\size\cf2 , msg[2], \cf4 \\attack\cf2 , msg[4] * 0.2/60, \cf4 \\a_phase\cf2 , a_phase, \cf4 \\rq_phase\cf2 , rq_phase,\cf4 \\gate\cf2 , 1]);\
 						\
 						\}).start;\
 					\};\
 			\};\
+			\
+			if(~activeNames[msg[1]] == \cf4 \\om\cf2 )\{\
+				\
+				\cf3 Synth\cf2 .new(\cf4 \\omEvent\cf2 , [\cf4 \\size\cf2 , msg[2],\cf4 \\dur\cf2 , msg[4]/60])\
+				\
+			\}\
 \
 \
 			\
